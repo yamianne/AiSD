@@ -1,0 +1,72 @@
+Zadanie polega na zaimplementowaniu trzech funkcji.
+
+-> public static double PolygonArea(this Point[] polygon)
+Oblicza pole wielokata przy pomocy formuly Gaussa
+
+-> public static bool IsSameSide(Point p1, Point p2, Segment s)
+Sprawdza, czy punkty p1 i p2 leza po tej samej stronie prostej wyznaczonej przez odcinek s
+Jesli ktorys z p1, p2 lezy na prostej wyznaczonej przez s, zwraca true
+
+-> public static Point[] GetIntersectedPolygon(Point[] subjectPolygon, Point[] clipPolygon)
+Oblicza czesc wspolna dwoch wielokatow przy pomocy algorytmu Sutherlanda–Hodgmana. Uwagi:
+- wielokat obcinany jest wklesly lub wypukly
+- wielokat obcinajacy jest wypukly
+- mozna zalozyc, ze 3 kolejne punkty w kazdym z wejsciowych wielokatow nie sa wspolliniowe
+- wynikiem dzialania funkcji moze byc tak naprawde wiele wielokatow (sytuacja taka moze wystapic,
+  jesli wielokat obcinany jest wklesly)
+- jesli wielokat obcinany i obcinajacy zawieraja wierzcholki o tych samych wspolrzednych,
+  w wynikowym wielokacie moge one byc zduplikowane
+- wierzcholki wielokata obcinanego, przez ktore przechodza krawedzie wielokata obcinajacego
+  zostaja zduplikowane w wielokacie wyjsciowym
+
+Pseudokod algorytmu spelniajacego powyzsze zalozenia znajduje sie ponizej.
+-------------------------------------------------------------------------------
+
+output = lista wierzcholkow wielokata obcinanego
+foreach ( krawedz e wielokata obcinajacego )
+    {
+    input = output
+    output = pusta lista
+    pp = ostatni element z input
+    foreach ( punkt p z input )
+        {
+        if ( p jest po wewnetrznej stronie krawedzi e )
+           {
+           if ( pp nie jest po wewnetrznej stronie krawedzi e )
+              dodaj punkt przeciecia odcinka <pp,p> i krawedzi e do output
+           dodaj punkt p output
+           }
+        else
+           if ( pp jest po wewnetrznej stronie krawedzi e )
+              dodaj punkt przeciecia odcinka <pp,p> i krawedzi e do output
+        pp = p
+        }
+    }
+usun¹æ duplikaty z output // tylko dla wersji z usuwaniem duplikatow
+
+-------------------------------------------------------------------------------
+
+Wskazówka:
+Aby sprawdziæ czy "punkt p jest po wewnetrznej stronie krawedzi e"
+wystarczy sprawdziæ czy p i jakiœ inny punkt, o którym wiadomo, ¿e jest po wewnêtrznej stronie krawêdzi e
+s¹ po tej samej stronie krawêdzi e.
+A jaki punkt jest na pewno wewn¹trz wielok¹ta wypuk³ego to ju¿ nale¿y wymysliæ samodzielnie.
+
+Inne uwagi:
+1. Funkcja GetIntersectionPoint zwracajaca punkt przeciecia prostych wyznaczonych przez odcinki
+   znajduje sie w pliku SutherlandHodgman.cs 
+2. Funkcje IsSameSide i GetIntersectionPoint moga/powinny zostaæ wykorzystane w GetIntersectedPolygon
+3. Program rysuje i zapisuje przypadki testowe dla funkcji GetIntersectedPolygon do bitmap umieszczonych w katalogu Testy.
+   Oznaczenia:
+   - niebieski: wielok¹t obcinany
+   - czerwony: wielok¹t obcinaj¹cy
+   - zielony: wielokat wynikowy (te jego krawedzie, które pokrywaj¹ siê z krawêdziami z obcinanego lub obcinajacego)
+   - pomarañczowy: wielokat wynikowy (te jego krawedzie, ktore nie istnia³y w wielok¹cie obcinanym lub obcinaj¹cym). 
+4. Nale¿y dodaæ referencjê do System.Drawing
+
+Punktacja:
+- PolygonArea: 1 pkt
+- IsSameSide:  0 pkt (to element GetIntersectedPolygon)
+- GetIntersectedPolygon (bez usuwania duplikatów): 2.5 pkt
+- GetIntersectedPolygon (z usuwaniem duplikatów):  0.5 pkt (razem 3 pkt za pe³ne GetIntersectedPolygon)
+Uwaga: Przez 'duplikat' rozumiemy drugi lub kolejny punkt o tych samych wspó³rzêdnych, co pierwszy 
